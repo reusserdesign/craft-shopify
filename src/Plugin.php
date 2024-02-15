@@ -56,31 +56,17 @@ class Plugin extends BasePlugin
     /**
      * @var string
      */
-    public string $schemaVersion = '4.0.6'; // For some reason the 2.2+ version of the plugin was at 4.0 schema version
+    public $schemaVersion = '4.0.6'; // For some reason the 2.2+ version of the plugin was at 4.0 schema version
 
     /**
      * @inheritdoc
      */
-    public bool $hasCpSettings = true;
+    public $hasCpSettings = true;
 
     /**
      * @inheritdoc
      */
-    public bool $hasCpSection = true;
-
-    /**
-     * @inheritdoc
-     */
-    public static function config(): array
-    {
-        return [
-            'components' => [
-                'api' => ['class' => Api::class],
-                'products' => ['class' => Products::class],
-                'store' => ['class' => Store::class],
-            ],
-        ];
-    }
+    public $hasCpSection = true;
 
     /**
      * @inheritdoc
@@ -104,6 +90,12 @@ class Plugin extends BasePlugin
     public function init()
     {
         $request = Craft::$app->getRequest();
+        
+        $this->setComponents([
+            'api' => Api::class,
+            'products' => Products::class,
+            'store' => Store::class,
+        ]);
 
         $this->_registerElementTypes();
         $this->_registerUtilityTypes();
