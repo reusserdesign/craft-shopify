@@ -14,6 +14,7 @@ use craft\shopify\events\ShopifyProductSyncEvent;
 use craft\shopify\helpers\Metafields as MetafieldsHelper;
 use craft\shopify\Plugin;
 use craft\shopify\records\ProductData as ProductDataRecord;
+use DateTime;
 use Shopify\Rest\Admin2023_10\Metafield as ShopifyMetafield;
 use Shopify\Rest\Admin2023_10\Product as ShopifyProduct;
 use Shopify\Rest\Admin2023_10\Variant as ShopifyVariant;
@@ -129,17 +130,17 @@ class Products extends Component
             'shopifyId' => $product->id,
             'title' => $product->title,
             'bodyHtml' => $product->body_html,
-            'createdAt' => $product->created_at,
+            'createdAt' =>($product->created_at),
             'handle' => $product->handle,
             'images' => $product->images,
             'options' => $product->options,
             'productType' => $product->product_type,
-            'publishedAt' => $product->published_at,
+            'publishedAt' => ($product->published_at),
             'publishedScope' => $product->published_scope,
             'shopifyStatus' => $product->status,
             'tags' => $product->tags,
             'templateSuffix' => $product->template_suffix,
-            'updatedAt' => $product->updated_at,
+            'updatedAt' => ($product->updated_at),
             'variants' => $variants ?? $product->variants,
             'vendor' => $product->vendor,
             'metaFields' => $metaFields,

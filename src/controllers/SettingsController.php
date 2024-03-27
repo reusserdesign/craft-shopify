@@ -82,12 +82,22 @@ class SettingsController extends Controller
 
         $pluginSettings->setProductFieldLayout($fieldLayout);
 
+        // Updat NOTE about Craft3 vs Craft 4: https://craftcms.com/docs/4.x/extend/updating-plugins.html#controller-responses
+        
         if (!$settingsSuccess) {
             return $this->asModelFailure(
                 $pluginSettings,
                 Craft::t('shopify', 'Couldn’t save settings.'),
                 'settings',
             );
+            
+            $this->setFailFlash(Craft::t('shopify', 'Couldn’t save settings.'));
+            
+            Craft::$app->getUrlManager()->setRouteParams([
+                'pluginSettings' => $pluginSettings,
+            ]);
+            
+            return null;
         }
 
         // Resave all products if the URI format changed
@@ -101,11 +111,8 @@ class SettingsController extends Controller
                 ],
             ]));
         }
-
-        return $this->asModelSuccess(
-            $pluginSettings,
-            Craft::t('shopify', 'Settings saved.'),
-            'settings',
-        );
+        
+        $this->setSuccessFlash(Craft::t('shopify', 'Settings saved.'));
+        return $this->redirectToPostedUrl($pluginSettings);
     }
 }

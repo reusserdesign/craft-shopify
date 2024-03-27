@@ -62,9 +62,9 @@ class Product extends Element
     public ?string $bodyHtml = null;
 
     /**
-     * @var ?DateTime
+     * @var string
      */
-    public ?DateTime $createdAt = null;
+    public ?string $createdAt = null;
 
     /**
      * @var string
@@ -92,9 +92,9 @@ class Product extends Element
     public ?string $productType = null;
 
     /**
-     * @var ?DateTime
+     * @var ?string
      */
-    public ?DateTime $publishedAt = null;
+    public ?string $publishedAt = null;
 
     /**
      * @var string
@@ -124,9 +124,9 @@ class Product extends Element
     public ?string $templateSuffix = null;
 
     /**
-     * @var ?DateTime
+     * @var ?string
      */
-    public ?DateTime $updatedAt = null;
+    public ?string $updatedAt = null;
 
     /**
      * @var array
@@ -298,6 +298,7 @@ class Product extends Element
     public function getCheapestVariant(): array
     {
         return collect($this->getVariants())->sortBy('price')->first();
+        
     }
 
     /**
@@ -307,7 +308,8 @@ class Product extends Element
      */
     public function getDefaultVariant(): array
     {
-        return collect($this->getVariants())->first();
+        // return collect($this->getVariants())->first();
+        return ($this->getVariants())[0];
     }
 
     /**
@@ -525,9 +527,9 @@ class Product extends Element
     /**
      * @inheritDoc
      */
-    protected function metaFieldsHtml(bool $static): string
+    protected function metaFieldsHtml(): string
     {
-        $fields[] = parent::metaFieldsHtml($static);
+        $fields[] = parent::metaFieldsHtml();
         return implode("\n", $fields);
     }
 
@@ -550,18 +552,18 @@ class Product extends Element
     /**
      * @inheritdoc
      */
-    public function getSidebarHtml(bool $static): string
+    public function getSidebarHtml(): string
     {
         /** @noinspection PhpUnhandledExceptionInspection */
         Craft::$app->getView()->registerAssetBundle(ShopifyCpAsset::class);
         $productCard = ProductHelper::renderCardHtml($this);
-        return $productCard . parent::getSidebarHtml($static);
+        return $productCard;
     }
 
     /**
      * @inerhitdoc
      */
-    public static function defineSources(string $context): array
+    public static function defineSources(string $context = null): array
     {
         return [
             [
@@ -683,20 +685,60 @@ class Product extends Element
             case 'shopifyId':
                 return $this->$attribute;
             case 'options':
-                return collect($this->getOptions())->map(function($option) {
-                    return HtmlHelper::tag('span', $option['name'], [
-                        'title' => $option['name'] . ' option values: ' . collect($option['values'])->join(', '),
-                    ]);
-                })->join(',&nbsp;');
+                // return collect($this->getOptions())->map(function($option) {
+                    
+                //     return HtmlHelper::tag('span', $option['name'], [
+                //         'title' => $option['name'] . ' option values: ' . collect($option['values'])->join(', '),
+                //     ]);
+                    
+                // })->join(',&nbsp;');
+                
+                $options_array = $this->getOptions();
+                $updated_options_array = [];
+                
+                foreach($options_array as $option) {
+                    array_push($updated_options_array, HtmlHelper::tag('span', $option['name'], ['title' => $option['name'] . ' option values: ' . join(', ', $option['values']),]));
+                }
+                
+                return join(',&nbsp;', $updated_options_array);
+                
+                
+                
             case 'tags':
-                return collect($this->getTags())->map(function($tag) {
-                    return HtmlHelper::tag('div', $tag, [
-                        'style' => 'margin-bottom: 2px;',
-                        'class' => 'token',
-                    ]);
-                })->join('&nbsp;');
+                // return collect($this->getTags())->map(function($tag) {
+                //     return HtmlHelper::tag('div', $tag, [
+                //         'style' => 'margin-bottom: 2px;',
+                //         'class' => 'token',
+                //     ]);
+                // })->join('&nbsp;');
+                
+                $tags_array = $this->getTags();
+                $updated_tags_array = [];
+                
+                foreach($tags_array as $tag) {
+                    array_push($updated_tags_array, HtmlHelper::tag('div', $tag, ['style' => 'margin-bottom: 2px;','class' => 'token',]));
+                }
+                
+                return join(',&nbsp;', $updated_tags_array);
+                
             case 'variants':
-                return collect($this->getVariants())->pluck('title')->map(fn($title) => StringHelper::toTitleCase($title))->join(',&nbsp;');
+                // return collect($this->getVariants())->pluck('title')->map(fn($title) => StringHelper::toTitleCase($title))->join(',&nbsp;');
+                
+                $variants_array = $this->getVariants();
+                $plucked_variants = [];
+                
+                $filtered_array = [];
+                
+                foreach ($variants_array as $variant) {
+                    array_push($plucked_variants, $variant['title']);
+                }
+                
+                foreach ($plucked_variants as $plucked) {
+                    array_push($filtered_array, StringHelper::toTitleCase($plucked));
+                }
+                return join(',&nbsp;', $filtered_array);
+                
+                
             default:
             {
                 return parent::tableAttributeHtml($attribute);

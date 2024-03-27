@@ -39,27 +39,39 @@ class WebhooksController extends Controller
         if (!$session = Plugin::getInstance()->getApi()->getSession()) {
             throw new ConflictHttpException('No Shopify API session found, check credentials in settings.');
         }
-
-        $webhooks = collect(Webhook::all($session));
+        
+        // Had to downgrade from Craft4: TODO fix "Create" button logic
+        
+        $webhooks = Webhook::all($session);
+    
+        
+        $containsAllWebhooks = true;
+        
+        if ($webhooks) {
+            foreach ($webhooks as $item) {
+    
+                if (str_contains($item->address, Craft::$app->getRequest()->getHostName())) {
+                    $containsAllWebhooks = false;
+                    continue;
+                }
+                    
+                if (!in_array($item->topic, [
+                    'products/create',
+                    'products/delete',
+                    'products/update',
+                    'inventory_levels/update',
+                    'products/create'
+                ])) {
+                    $containsAllWebhooks = false;
+                    continue;
+                }
+            }
+        } else {
+            $containsAllWebhooks = false;
+        }
+        
 
         // If we don't have all webhooks needed for the current environment show the create button
-
-        $containsAllWebhooks = (
-            $webhooks->contains(function($item) {
-                return str_contains($item->address, Craft::$app->getRequest()->getHostName()) && $item->topic === 'products/create';
-            }) &&
-            $webhooks->contains(function($item) {
-                return str_contains($item->address, Craft::$app->getRequest()->getHostName()) && $item->topic === 'products/delete';
-            }) &&
-            $webhooks->contains(function($item) {
-                return str_contains($item->address, Craft::$app->getRequest()->getHostName()) && $item->topic === 'products/update';
-            }) &&
-            $webhooks->contains(function($item) {
-                return str_contains($item->address, Craft::$app->getRequest()->getHostName()) && $item->topic === 'inventory_levels/update';
-            })
-        );
-
-
         return $this->renderTemplate('shopify/webhooks/index', compact('webhooks', 'containsAllWebhooks'));
     }
 

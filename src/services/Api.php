@@ -186,7 +186,7 @@ class Api extends Component
             ($apiSecretKey = App::parseEnv($pluginSettings->apiSecretKey))
         ) {
             /** @var MonologTarget $webLogTarget */
-            $webLogTarget = Craft::$app->getLog()->targets['web'];
+            // $webLogTarget = Craft::$app->getLog()->targets['web']; TODO: Turn logging back on
 
             Context::initialize(
                 apiKey: $apiKey,
@@ -198,7 +198,7 @@ class Api extends Component
                 sessionStorage: new FileSessionStorage(Craft::$app->getPath()->getStoragePath() . DIRECTORY_SEPARATOR . 'shopify_api_sessions'),
                 apiVersion: self::SHOPIFY_API_VERSION,
                 isEmbeddedApp: false,
-                logger: $webLogTarget->getLogger(),
+                // logger: $webLogTarget->getLogger(), TODO: Turn logging back on
             );
 
             $hostName = App::parseEnv($pluginSettings->hostName);

@@ -242,7 +242,7 @@ class Plugin extends BasePlugin
 
             $event->rules['shopify/products'] = 'shopify/products/product-index';
             $event->rules['shopify/sync-products'] = 'shopify/products/sync';
-            $event->rules['shopify/products/<elementId:\d+>'] = 'elements/edit';
+            $event->rules['shopify/products/<elementId:\d+>'] = 'edit/by-id';
             $event->rules['shopify/settings'] = 'shopify/settings';
             $event->rules['shopify/webhooks'] = 'shopify/webhooks/edit';
         });

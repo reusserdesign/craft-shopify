@@ -11,6 +11,7 @@ use craft\db\QueryAbortedException;
 use craft\elements\db\ElementQuery;
 use craft\helpers\Db;
 use craft\shopify\elements\Product;
+use DateTime;
 
 /**
  * ProductQuery represents a SELECT SQL statement for entries in a way that is independent of DBMS.
@@ -39,7 +40,7 @@ class ProductQuery extends ElementQuery
     /**
      * @inheritdoc
      */
-    protected array $defaultOrderBy = ['shopify_productdata.shopifyId' => SORT_ASC];
+    // protected array $defaultOrderBy = ['shopify_productdata.shopifyId' => SORT_ASC];
 
     /**
      * @inheritdoc
@@ -146,9 +147,9 @@ class ProductQuery extends ElementQuery
      *     ->all();
      * ```
      */
-    public function status(array|string|null $value): ProductQuery
+    public function status($value): ProductQuery
     {
-        parent::status($value);
+        $this->status = $value;
         return $this;
     }
 

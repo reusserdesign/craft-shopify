@@ -1,5 +1,5 @@
 {% extends "shopify/settings/_layout" %}
-{% import '_includes/forms.twig' as forms %}
+{% import '_includes/forms.html' as forms %}
 {% set fullPageForm = true %}
 
 {% do view.registerTranslations('shopify', [
@@ -13,7 +13,7 @@
     {{ redirectInput('shopify/settings') }}
 
     <div id="products" class="hidden">
-
+        {# Update to Craft4 Note: https://craftcms.com/docs/4.x/extend/updating-plugins.html#editable-tables #}
         {{ forms.editableTableField({
             label: "Routing Settings"|t('shopify'),
             instructions: "Configure the product’s front-end routing settings."|t('shopify'),
@@ -46,9 +46,9 @@
                     }
                 }
             },
-            allowAdd: false,
-            allowDelete: false,
-            allowReorder: false,
+            allowAdd: true, 
+            allowDelete: true,
+            allowReorder: true,
             errors: []|unique
         }) }}
 
